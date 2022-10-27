@@ -1,0 +1,511 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+::selection {
+  background-color: #635e5e;
+}
+
+/* ANIMATIONS */
+@keyframes fout {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+  100% {
+    opacity: 0;
+    scale: 0.8;
+  }
+}
+@keyframes fin {
+  0% {
+    opacity: 0;
+    scale: 0.8;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes dout {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes din {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes lup {
+  0% {
+    background-color: "";
+  }
+  100% {
+    background-color: #fee06b40;
+  }
+}
+@keyframes lout {
+  0% {
+    background-color: #fee06b40;
+  }
+  100% {
+    background-color: "";
+  }
+}
+
+.fadeout {
+  animation-name: fout;
+  animation-delay: 100ms;
+  animation-duration: 200ms;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+.fadein {
+  animation-name: fin;
+  animation-delay: 0;
+  animation-duration: 200ms;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+
+.lightup {
+  animation-name: lup;
+  animation-duration: 100ms;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+.lightsout {
+  animation-name: lout;
+  animation-duration: 180ms;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+
+.dialogreveal {
+  animation-name: din;
+  animation-duration: 200ms;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+.dialogclose {
+  animation-name: dout;
+  animation-duration: 200ms;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+}
+/* ANIMATIONS END */
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 100vh;
+  align-items: center;
+  background-color: #2e2b2b;
+}
+.game-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0 auto;
+  width: 50%;
+  min-height: 48rem;
+  border-right: 1px solid rgba(250, 235, 215, 0.555);
+}
+.gl-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 0 4rem;
+  width: 50%;
+  min-height: 48rem;
+}
+.controls-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.title {
+  font-family: "Alkalami", serif;
+  font-size: 6rem;
+  line-height: 1.5em;
+  color: #faead6;
+  user-select: none;
+}
+.label {
+  font-family: "Alkalami", serif;
+  font-size: 2.5rem;
+  color: antiquewhite;
+  text-align: center;
+  user-select: none;
+}
+.difficulty-wrapper {
+  display: flex;
+  width: 38rem;
+  justify-content: space-evenly;
+  margin-top: 0.8rem;
+}
+.diff-button {
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 500;
+  font-size: 2rem;
+  padding: 0.8rem 1rem;
+  color: antiquewhite;
+  outline: none;
+  border: 2px solid antiquewhite;
+  background-color: #423a37;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.diff-button:hover {
+  cursor: pointer;
+  transform: translate(-5px, -5px);
+  box-shadow: 1px 1px 0 0 rgb(240, 225, 205), 2px 2px 0 0 rgb(230, 215, 195),
+    3px 3px 0 0 rgb(220, 205, 185), 4px 4px 0 0 rgb(210, 195, 175),
+    5px 5px 0 0 rgb(200, 185, 165);
+}
+.diff-button:active {
+  transform: initial;
+  box-shadow: none;
+}
+.game-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+.sprite-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  object-fit: contain;
+  padding: 2rem;
+  pointer-events: none;
+  height: clamp(17rem, 30vw, 28rem);
+}
+.sprite {
+  height: 100%;
+}
+.grid {
+  display: grid;
+  grid-template-rows: repeat(var(--grid-rows), 1fr);
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+
+  border: 2px solid #c0b5a5;
+}
+.tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 3rem;
+  height: 3rem;
+  padding: 0.5rem;
+  border: 1px solid #c0b5a5;
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+  user-select: none;
+  background-color: transparent;
+}
+.newgame-btn {
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 500;
+  font-size: 1.4rem;
+  padding: 0.6rem 0.8rem;
+  margin-top: 3rem;
+  color: antiquewhite;
+  outline: none;
+  border: 2px solid antiquewhite;
+  background-color: #423a37;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+.newgame-btn:hover {
+  background-color: antiquewhite;
+  color: #423a37;
+  transition: color 180ms ease, background-color 180ms ease;
+  cursor: pointer;
+}
+.gl-title {
+  font-family: "Alkalami", serif;
+  font-size: 4.5rem;
+  line-height: 1.5em;
+  color: #faead6;
+  user-select: none;
+}
+.gl-label {
+  font-family: "Alkalami", serif;
+  font-size: 2.8rem;
+  line-height: 1.2em;
+  margin: 4rem 0 1rem 0;
+  color: #faead6;
+  user-select: none;
+  border-bottom: 1px solid antiquewhite;
+}
+.gl-playername {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 3.35rem;
+  font-weight: 500;
+  margin-bottom: 1.8rem;
+  color: #faead6;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 22rem;
+}
+.gl-hor-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 1rem 0;
+}
+.gl-vert-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-input {
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 500;
+  font-size: 1.4rem;
+  padding: 0 0.5rem;
+  color: antiquewhite;
+  width: 16rem;
+  height: 3.2rem;
+  outline: none;
+  border: 2px solid antiquewhite;
+  background-color: transparent;
+}
+.profile-button {
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 600;
+  font-size: 1.8rem;
+  line-height: 1em;
+  width: 4rem;
+  height: 3.2rem;
+  outline: none;
+  border: 2px solid antiquewhite;
+  border-left: none;
+  color: antiquewhite;
+  background-color: rgba(224, 210, 192, 0.15);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+.profile-button:hover {
+  cursor: pointer;
+  color: #2e2b2b;
+  background-color: antiquewhite;
+}
+.profile-remove-button {
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1em;
+  width: 10rem;
+  height: 3.2rem;
+  margin-left: 1rem;
+  outline: none;
+  border: 2px solid antiquewhite;
+  color: antiquewhite;
+  background-color: rgba(224, 210, 192, 0.15);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+.profile-remove-button:hover {
+  cursor: pointer;
+  color: #2e2b2b;
+  background-color: antiquewhite;
+}
+.game-list {
+  display: flex;
+  flex-direction: column;
+  max-height: 22rem;
+  padding-left: 0.5rem;
+  list-style-type: none;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.gl-entry {
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 500;
+  font-size: 1.6rem;
+
+  color: #cabeae;
+}
+.gl-entry::before {
+  content: "\2684";
+  margin-right: 0.5rem;
+}
+.dialog-wrapper {
+  z-index: 7;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #00000070;
+}
+.canv {
+  z-index: 71;
+  width: 100%;
+  height: 100%;
+}
+.dialog-box {
+  position: absolute;
+  z-index: 771;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  width: 20rem;
+  height: 14rem;
+  background-color: #2e2b2b;
+  border: 2px solid antiquewhite;
+}
+.dialog-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: fit-content;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px dashed antiquewhite;
+  user-select: none;
+}
+.dialog-title {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1em;
+  color: antiquewhite;
+  transform: translateY(-2px);
+}
+.dialog-close {
+  background-image: url("public/close.svg");
+  background-position: center;
+  background-size: cover;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+}
+.dialog-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+}
+.dialog-time-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 50%;
+  height: 100%;
+}
+.dialog-stopwatch {
+  height: 4rem;
+  width: 4rem;
+  margin: 0 auto;
+}
+.dialog-time {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 500;
+  text-align: center;
+  color: antiquewhite;
+  line-height: 1em;
+  height: fit-content;
+  margin-top: 0.5rem;
+}
+.dialog-newgame {
+  font-family: "Noto Sans", sans-serif;
+  font-weight: 600;
+  font-size: 3rem;
+  padding: 0.5rem 1.5rem;
+  margin: auto;
+  color: antiquewhite;
+  outline: none;
+  border: 2px solid antiquewhite;
+  background-color: #423a37;
+  transition: color 180ms ease, background-color 180ms ease;
+}
+.dialog-newgame:hover {
+  background-color: antiquewhite;
+  color: #423a37;
+  transition: color 180ms ease, background-color 180ms ease;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 1800px) {
+  .title {
+    font-size: clamp(3rem, 6vw, 6rem);
+  }
+  .gl-title {
+    font-size: clamp(2.5rem, 4vw, 4.5rem);
+    margin-top: 2rem;
+  }
+  .gl-label {
+    font-size: clamp(2rem, 5vw, 2.8rem);
+  }
+  .gl-playername {
+    font-size: clamp(2.2rem, 3.5vw, 3.35rem);
+    margin-top: 2rem;
+  }
+  .label {
+    font-size: 1.8rem;
+  }
+  .controls-wrapper {
+    margin: 2rem 0 1rem 0;
+  }
+}
+
+@media screen and (max-width: 1400px) {
+  .wrapper {
+    flex-direction: column;
+  }
+  .game-area {
+    margin: 2rem auto;
+  }
+  .game-wrapper {
+    border: none;
+    width: 100%;
+    max-width: 50rem;
+  }
+  .gl-wrapper {
+    width: 100%;
+    padding: 0 1rem;
+    max-width: 50rem;
+  }
+  .gl-playername {
+    margin-bottom: 1.25rem;
+  }
+  .sprite-wrapper {
+    height: 25rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .diff-button {
+    font-size: clamp(1.2rem, 5vw, 2rem);
+  }
+  .difficulty-wrapper {
+    width: fit-content;
+    gap: 1rem;
+  }
+}

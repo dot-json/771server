@@ -1,0 +1,34 @@
+Arguments: 
+  /usr/bin/node /sbin/yarn add express
+
+PATH: 
+  /home/jonah/.cargo/bin:/sbin:/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  19.0.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: connect ECONNREFUSED 2606:4700::6810:1023:443
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1284:16)
+
+npm manifest: 
+  {
+    "name": "lightserver",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "https://github.com/dot-json/lightserver.git",
+    "author": "dot-json <zsombor.gazdag@gmail.com>",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
