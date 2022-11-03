@@ -204,8 +204,24 @@
   display: grid;
   grid-template-rows: repeat(var(--grid-rows), 1fr);
   grid-template-columns: repeat(var(--grid-cols), 1fr);
-
   border: 2px solid #c0b5a5;
+}
+.gametime {
+  font-family: "Noto Sans", sans-serif;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2em;
+  margin-bottom: 0.8rem;
+  color: antiquewhite;
+  user-select: none;
+}
+.gametime::before {
+  display: inline-block;
+  content: url("public/time.svg");
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.5rem;
+  transform: translateY(2px);
 }
 .tile {
   display: flex;
@@ -221,6 +237,10 @@
   font-size: 1.6rem;
   user-select: none;
   background-color: transparent;
+  object-fit: cover;
+}
+.redlight {
+  background-color: #ff392eaa !important;
 }
 .newgame-btn {
   font-family: "Noto Sans", sans-serif;
@@ -259,13 +279,13 @@
 .gl-playername {
   font-family: "Noto Sans", sans-serif;
   font-size: 3.35rem;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 1.8rem;
   color: #faead6;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 22rem;
+  max-width: 21rem;
 }
 .gl-hor-wrapper {
   display: flex;
@@ -285,7 +305,7 @@
   padding: 0 0.5rem;
   color: antiquewhite;
   width: 16rem;
-  height: 3.2rem;
+  height: 3.5rem;
   outline: none;
   border: 2px solid antiquewhite;
   background-color: transparent;
@@ -293,10 +313,9 @@
 .profile-button {
   font-family: "Noto Sans", sans-serif;
   font-weight: 600;
-  font-size: 1.8rem;
-  line-height: 1em;
+  font-size: 2.2rem;
   width: 4rem;
-  height: 3.2rem;
+  height: 3.5rem;
   outline: none;
   border: 2px solid antiquewhite;
   border-left: none;
@@ -315,7 +334,7 @@
   font-size: 1.2rem;
   line-height: 1em;
   width: 10rem;
-  height: 3.2rem;
+  height: 3.5rem;
   margin-left: 1rem;
   outline: none;
   border: 2px solid antiquewhite;
@@ -338,19 +357,28 @@
   overflow-x: hidden;
 }
 .gl-entry {
+  max-width: 100%;
+  display: flex;
+  align-items: center;
   font-family: "Noto Sans", sans-serif;
   font-weight: 500;
   font-size: 1.6rem;
-
   color: #cabeae;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .gl-entry::before {
   content: "\2684";
+  height: fit-content;
+  line-height: 1em;
+  text-align: center;
   margin-right: 0.5rem;
+  font-size: 2rem;
+  font-weight: 500;
 }
 .dialog-wrapper {
   z-index: 7;
-  position: absolute;
+  position: fixed;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -366,7 +394,7 @@
   height: 100%;
 }
 .dialog-box {
-  position: absolute;
+  position: fixed;
   z-index: 771;
   left: 50%;
   top: 50%;

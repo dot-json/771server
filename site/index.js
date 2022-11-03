@@ -12,6 +12,7 @@ const gamelist = document.querySelector("#prev-games");
 
 const all_profiles = [];
 let current_profile = "";
+let timerObj = null;
 let current_time = 0;
 
 const givenTiles = {
@@ -70,6 +71,7 @@ const givenTiles = {
 };
 let bulbs = [];
 
+//kollektiv fadelés funkciók
 const fadeinElems = (...elems) => {
   elems.map((e) => {
     e.classList.remove("fadeout");
@@ -82,6 +84,7 @@ const fadeoutElems = (...elems) => {
     e.classList.add("fadeout");
   });
 };
+//-------------------------
 
 function removeFromObj(arr, value) {
   for (var i = arr.length - 1; i >= 0; --i) {
@@ -91,13 +94,13 @@ function removeFromObj(arr, value) {
   }
 }
 
+//check segédek
 const getPos = (id, g_size) => {
   return { row: Math.floor(id / g_size), col: id % g_size };
 };
 const getTile = (pos, size, grid) => {
   return grid[pos.row * size + pos.col];
 };
-
 function bulbAtPos(r, c) {
   let state = false;
   bulbs.map((e) => {
@@ -107,7 +110,9 @@ function bulbAtPos(r, c) {
   });
   return state;
 }
+//--------------
 
+//raytracing segédek
 const checkVUP = (grid_elems, source, g_size) => {
   let state = true;
   for (let i = source.row - 1; i >= 0; i--) {
@@ -184,7 +189,9 @@ const checkHRIGHT = (grid_elems, source, g_size) => {
   }
   return state;
 };
+//------------------------
 
+//kivilágitás - 4 irányban minden mezőt további 4 irányban checkel
 const lightUp = (grid_elems, source, g_size) => {
   // MIDDLE ---------------------------------------------------------
   const middle = getTile(source, g_size, grid_elems);
@@ -199,7 +206,7 @@ const lightUp = (grid_elems, source, g_size) => {
       g_size,
       grid_elems
     );
-    if (current_tile.style.backgroundColor != "rgb(192, 181, 165)") {
+    if (current_tile.dataset.isWall == "false") {
       current_tile.style.animationDelay = `${iteration * 25}ms`;
       current_tile.classList.remove("lightsout");
       current_tile.classList.add("lightup");
@@ -217,7 +224,7 @@ const lightUp = (grid_elems, source, g_size) => {
       g_size,
       grid_elems
     );
-    if (current_tile.style.backgroundColor != "rgb(192, 181, 165)") {
+    if (current_tile.dataset.isWall == "false") {
       current_tile.style.animationDelay = `${iteration * 25}ms`;
       current_tile.classList.remove("lightsout");
       current_tile.classList.add("lightup");
@@ -235,7 +242,7 @@ const lightUp = (grid_elems, source, g_size) => {
       g_size,
       grid_elems
     );
-    if (current_tile.style.backgroundColor != "rgb(192, 181, 165)") {
+    if (current_tile.dataset.isWall == "false") {
       current_tile.style.animationDelay = `${iteration * 25}ms`;
       current_tile.classList.remove("lightsout");
       current_tile.classList.add("lightup");
@@ -253,7 +260,7 @@ const lightUp = (grid_elems, source, g_size) => {
       g_size,
       grid_elems
     );
-    if (current_tile.style.backgroundColor != "rgb(192, 181, 165)") {
+    if (current_tile.dataset.isWall == "false") {
       current_tile.style.animationDelay = `${iteration * 25}ms`;
       current_tile.classList.remove("lightsout");
       current_tile.classList.add("lightup");
@@ -265,6 +272,7 @@ const lightUp = (grid_elems, source, g_size) => {
   //-----------------------------------------------------------------
 };
 
+//hasonló logikával lekapcsol
 const lightsOut = (grid_elems, source, g_size) => {
   // VERTICAL DOWN --------------------------------------------------
   for (let i = source.row + 1; i < g_size; i++) {
@@ -376,6 +384,7 @@ const lightsOut = (grid_elems, source, g_size) => {
   //-----------------------------------------------------------------
 };
 
+//falak körüli villanyokat számolja
 function checkAround(grid_elems, id, g_size) {
   let amount = 0;
   const mid = getPos(id, g_size);
@@ -411,11 +420,15 @@ function checkAround(grid_elems, id, g_size) {
   return amount;
 }
 
+//ellenőrzi a készséget
 function checkCompletion(grid_elems, mode, g_size) {
   let state = true;
   grid_elems.map((e) => {
     if (e.dataset.isWall == "false" && !e.classList.contains("lightup")) {
       state = false;
+    }
+    if (e.children.length == 0 && e.classList.contains("redlight")) {
+      e.classList.remove("redlight");
     }
   });
   bulbs.map((e) => {
@@ -425,7 +438,10 @@ function checkCompletion(grid_elems, mode, g_size) {
       !checkHLEFT(grid_elems, e, g_size) ||
       !checkHRIGHT(grid_elems, e, g_size)
     ) {
+      getTile(e, g_size, grid_elems).classList.add("redlight");
       state = false;
+    } else {
+      getTile(e, g_size, grid_elems).classList.remove("redlight");
     }
   });
   givenTiles[mode].map((e) => {
@@ -443,7 +459,8 @@ function checkCompletion(grid_elems, mode, g_size) {
   return state;
 }
 
-const renderDialog = (grid, newgame) => {
+//megjelenitjuk a játék végi dialógust
+const renderDialog = (grid, newgame, timer, time) => {
   const dialog = document.createElement("div");
   dialog.classList.add("dialog-wrapper", "dialogreveal");
   dialog.innerHTML = `
@@ -456,7 +473,7 @@ const renderDialog = (grid, newgame) => {
     <div class="dialog-content">
       <div class="dialog-time-box">
         <img src="public/time.svg" alt="watch" class="dialog-stopwatch" />
-        <span class="dialog-time">0:42</span>
+        <span class="dialog-time">${time}</span>
       </div>
       <button class="dialog-newgame" id="dialog-new">&#8635;</button>
     </div>
@@ -482,14 +499,48 @@ const renderDialog = (grid, newgame) => {
       setTimeout(() => {
         gamearea.removeChild(grid);
         gamearea.removeChild(newgame);
+        gamearea.removeChild(timer);
+        clearInterval(timerObj);
+        timerObj = null;
         renderHome();
       }, 200);
-      fadeoutElems(title, label, grid, newgame);
+      fadeoutElems(title, label, grid, newgame, timer);
     }, 200);
   });
 };
 
-const handleGameLogic = (e, grid, mode, newgame) => {
+//a kör végén logoljuk az eredményt
+const logGame = (time, mode) => {
+  let game = document.createElement("li");
+  game.classList.add("gl-entry");
+  game.innerHTML = `[player: ${
+    current_profile == "" ? "guest" : current_profile
+  }] - [mode: ${mode}] - [time: ${time}]`;
+  game.title = game.innerHTML;
+  gamelist.prepend(game);
+};
+
+//időzitő callback
+const tickTimer = (timer) => {
+  if (current_time >= 3600) {
+    return;
+  }
+  current_time++;
+
+  let min = Math.floor(current_time / 60);
+  let sec = current_time % 60;
+
+  if (sec < 10) {
+    sec = "0" + sec;
+  }
+  if (min < 10) {
+    min = "0" + min;
+  }
+  timer.innerHTML = `${min}:${sec}`;
+};
+
+//minden grid-click eventnél alkalmazzuk a játékmenet logikáját
+const handleGameLogic = (e, grid, mode, newgame, timer) => {
   if (
     e.target.id == "tile" &&
     e.target.style.backgroundColor != "rgb(192, 181, 165)"
@@ -502,6 +553,7 @@ const handleGameLogic = (e, grid, mode, newgame) => {
     if (e.target.children.length == 0) {
       let bulb = document.createElement("img");
       bulb.style.pointerEvents = "none";
+      bulb.style.height = "100%";
       bulb.src = "public/bulb.svg";
       e.target.appendChild(bulb);
       e.target.dataset.isBulb = "true";
@@ -515,23 +567,47 @@ const handleGameLogic = (e, grid, mode, newgame) => {
       e.target.removeChild(e.target.firstChild);
     }
     if (checkCompletion(grid_elems, mode, g_size)) {
-      renderDialog(grid, newgame);
+      let min = Math.floor(current_time / 60);
+      let sec = current_time % 60;
+      if (sec < 10) {
+        sec = "0" + sec;
+      }
+      if (min < 10) {
+        min = "0" + min;
+      }
+      let time = `${min}:${sec}`;
+      grid.style.pointerEvents = "none";
+      logGame(time, mode);
+      clearInterval(timerObj);
+      renderDialog(grid, newgame, timer, time);
     }
   }
 };
 
+//előkésziti a játékteret majd elinditja a játékot
 const runGame = (mode) => {
   fadeinElems(title, label);
   title.innerHTML = "Játék folyamatban";
   label.innerHTML = "Világítsd meg az összes zónát!";
+  player_input.disabled = true;
+  player_button.disabled = true;
+  player_remove_button.disabled = true;
   bulbs = [];
+  current_time = 0;
+  if (timerObj) {
+    clearInterval(timerObj);
+    timerObj = null;
+  }
   const grid = document.createElement("div");
   grid.classList.add("grid");
   grid.id = "grid";
+  const gametime = document.createElement("span");
+  gametime.classList.add("gametime");
+  gametime.innerHTML = "00:00";
   const newgame = document.createElement("button");
   newgame.classList.add("newgame-btn");
   newgame.innerHTML = "&#8635; Új játék";
-  fadeinElems(grid, newgame);
+  fadeinElems(grid, newgame, gametime);
   switch (mode) {
     case "easy":
       grid.style.setProperty("--grid-rows", 7);
@@ -551,7 +627,13 @@ const runGame = (mode) => {
         }
         grid.children[e.id].dataset.isWall = "true";
       });
+      gamearea.appendChild(gametime);
       gamearea.appendChild(grid);
+      if (!timerObj) {
+        timerObj = setInterval(() => {
+          tickTimer(gametime);
+        }, 1000);
+      }
       break;
     case "hard":
       grid.style.setProperty("--grid-rows", 7);
@@ -570,7 +652,13 @@ const runGame = (mode) => {
         }
         grid.children[e.id].dataset.isWall = "true";
       });
+      gamearea.appendChild(gametime);
       gamearea.appendChild(grid);
+      if (!timerObj) {
+        timerObj = setInterval(() => {
+          tickTimer(gametime);
+        }, 1000);
+      }
       break;
     case "expert":
       grid.style.setProperty("--grid-rows", 10);
@@ -589,7 +677,13 @@ const runGame = (mode) => {
         }
         grid.children[e.id].dataset.isWall = "true";
       });
+      gamearea.appendChild(gametime);
       gamearea.appendChild(grid);
+      if (!timerObj) {
+        timerObj = setInterval(() => {
+          tickTimer(gametime);
+        }, 1000);
+      }
       break;
   }
 
@@ -597,23 +691,30 @@ const runGame = (mode) => {
   newgame.addEventListener("click", () => {
     setTimeout(() => {
       grid.removeEventListener("click", (e) => {
-        handleGameLogic(e, grid, mode);
+        handleGameLogic(e, grid, mode, newgame, gametime);
       });
       gamearea.removeChild(grid);
       gamearea.removeChild(newgame);
+      gamearea.removeChild(gametime);
+      clearInterval(timerObj);
+      timerObj = null;
       renderHome();
     }, "500");
-    fadeoutElems(title, label, grid, newgame);
+    fadeoutElems(title, label, grid, newgame, gametime);
   });
   checkCompletion([...grid.children], mode, Math.sqrt(grid.children.length));
   grid.addEventListener("click", (e) => {
-    handleGameLogic(e, grid, mode, newgame);
+    handleGameLogic(e, grid, mode, newgame, gametime);
   });
 };
 
+//előkésziti majd megjeleniti a homescreent
 const renderHome = () => {
   title.innerHTML = "Játék indítása";
   label.innerHTML = "Nehézség:";
+  player_input.disabled = false;
+  player_button.disabled = false;
+  player_remove_button.disabled = false;
 
   let cpanel = document.createElement("div");
   cpanel.classList.add("difficulty-wrapper");
@@ -653,6 +754,7 @@ const renderHome = () => {
   fadeinElems(title, label, cpanel, spritewrapper);
 };
 
+//módválasztás
 const handleControls = (e) => {
   if (e.target.matches("button")) {
     const panel = document.querySelector("#control-buttons");
@@ -668,8 +770,14 @@ const handleControls = (e) => {
   }
 };
 
+//profilválasztás
 const handleProfileChange = () => {
   if (player_input.value == "") {
+    alert("A név nem lehet üres!");
+    return;
+  }
+  if (player_input.value == "guest") {
+    alert("A guest név nem választható!");
     return;
   }
   current_profile = player_input.value;
